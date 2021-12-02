@@ -4,6 +4,13 @@ use std::{
     path::Path,
 };
 
+fn num_increases_windowed(nums: &[i32], window_size: usize) -> usize {
+    let windows = nums.windows(window_size);
+    let sums: Vec<i32> = windows.map(|window| window.iter().sum()).collect();
+    let adjacent_differences = sums.iter().zip(sums.iter().skip(1)).map(|(l, r)| r - l);
+    adjacent_differences.filter(|val| val > &0).count()
+}
+
 fn main() {
     let matches = clap::App::new("sonar-sweep")
         .version("0.1")
@@ -31,12 +38,16 @@ fn main() {
         .collect();
 
     let nums = nums.unwrap();
-    let adjacent_differences = nums.iter().zip(nums.iter().skip(1)).map(|(l, r)| r - l);
 
-    let increasing_count = adjacent_differences.filter(|val| val > &0).count();
-
+    // First problem
     println!(
         "The number of instances where the depth increases is: {}",
-        increasing_count
+        num_increases_windowed(&nums, 1)
+    );
+
+    // Second problem
+    println!(
+        "The number of instances where the windowed total depth increases is: {}",
+        num_increases_windowed(&nums, 3)
     );
 }
